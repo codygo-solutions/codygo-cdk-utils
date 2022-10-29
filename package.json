@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",
-    "build": "tsup"
+    "build": "tsup",
+    "deploy": ""
   },
   "keywords": [
     "cdk",
@@ -24,8 +25,8 @@
     "pascal-case": "^3.1.2"
   },
   "peerDependencies": {
-    "aws-cdk-lib": "^2.49.0",
-    "constructs": "^10.1.143"
+    "aws-cdk-lib": ">= 2",
+    "constructs": ">= 10"
   },
   "dependencies": {}
 }
