@@ -32,8 +32,9 @@ export function exportStackOutputs(scope: Construct, outputs: Record<string, str
 
 export function importStackOutput<T extends Object>(scope: Construct, otherStackBaseName: string, outputKeys: Array<keyof T>): Record<keyof T, string>{
   const record = {} as Record<keyof T, string>;
+  const stage = getStage(scope);
   outputKeys.forEach(key => {
-    record[key] = getStackOutput(otherStackBaseName, stagedName(scope, key as string));
+    record[key] = getStackOutput(stage + "-" + otherStackBaseName, key as string);
   })
 
   //Fn.importValue(`dev-BackendStack.${key as string}`)
