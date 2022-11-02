@@ -9,13 +9,44 @@ export function setStage(app: App, stageName: string) {
   Tags.of(app).add("stage", app.stageName);
 }
 
-export function stagedName(scope: Construct, name: string) {
-  return pascalCase(App.of(scope)?.stageName + " " + name);
+export function getStage(scope: Construct): string{
+  const stage = App.of(scope)?.stageName;
+  if(!stage){
+    throw new Error("No stage name or no app")
+  }
+  return stage;
 }
+
+export function stagedName(scope: Construct, name: string) {
+  return pascalCase(getStage(scope) + " " + name);
+}
+
+export function exportStackOutputs(scope: Construct, outputs: Record<string, string>){
+  Object.entries(outputs).forEach(([key, value]) => {
+    new CfnOutput(scope, key, {
+      value,
+      exportName: stagedName(scope, key)
+    })
+  }) 
+}
+
+export function importStackOutput<T extends Object>(scope: Construct, otherStackBaseName: string, outputKeys: Array<keyof T>): Record<keyof T, string>{
+  const record = {} as Record<keyof T, string>;
+  outputKeys.forEach(key => {
+    record[key] = getStackOutput(otherStackBaseName, stagedName(scope, key as string));
+  })
+
+  //Fn.importValue(`dev-BackendStack.${key as string}`)
+  //Fn.importValue(stagedName(scope, key as string)) // 
+  ///  //
+  return record;
+}
+
 
 export function exec(cmd: string): string {
   return execSync(cmd).toString().trim();
 }
+
 
 export function getStackOutput(stackName: string, outputKey: string) {
   return exec(
